@@ -27,22 +27,27 @@ float lx = -1.0f, lz = -1.0f;
 float FoV = 45.0f;
 
 float deltaAngle = 0.0f;
-float deltaMove = 0.0f;
+float deltaMove = 0.2f;
 //x, y, z for 3d Model
 float xModel = 0.0f;
 float yModel = 0.0f;
 float zModel = 0.0f;
 
 //x, y, z for cube
-float xCube = -20.0f;
-float yCube = 0.0f;
-float zCube = 0.0f;
+float xObj1 = -20.0f;
+float yObj1 = 0.0f;
+float zObj1 = 0.0f;
 
 //bool to display cube 
-bool cubeAppeared = true;
+bool isShown = true;
 
 //bool to check crashed
 bool isCrashed = false;
+
+//score
+float score = 0.0;
+//level
+float level = 0.1f;
 
 Vector3f lightPos(-3, 5, 5); // lightDir vector
 Vector3f lightColor(1, 1, 1); 
@@ -83,11 +88,10 @@ struct Model3D {
 	GLuint uvbuffer;
 	GLuint nmbuffer;
 };
-Model3D cube;
-Model3D suzanne;
-Model3D canape;
+
 Model3D car;
 Model3D table;
+Model3D road;
 
 GLuint loadBMP_custom(const char * imagepath) {
 
@@ -318,212 +322,6 @@ void updateShaderResources()
 	ModelMatrixID = glGetUniformLocation(progShader, "M");
 }
 
-void drawTriangles()
-{	
-	glLoadIdentity();									// Reset The Current Modelview Matrix
-	//glTranslatef(-1.5f,0.0f,-6.0f);						// Move Left 1.5 Units And Into The Screen 6.0
-	//glRotatef(rtri,0.0f,1.0f,0.0f);
-
-	//glLoadIdentity();									// Reset The Current Modelview Matrix
-	//glTranslatef(-1.5f,0.0f,-6.0f);						// Move Left 1.5 Units And Into The Screen 6.0
-	//glRotatef(rtri,0.0f,1.0f,0.0f);						// Rotate The Triangle On The Y axis ( NEW )
-	//rtri+=0.02f;											// Increase The Rotation Variable For The Triangle ( NEW )
-	//cout << "Rotate angle " << rtri<< endl;
-
-	//glBegin(GL_TRIANGLES);								// Start Drawing A Triangle
-	//	glColor3f(1.0f,0.0f,0.0f);						// Red
-	//	glVertex3f( 0.0f, 1.0f, 0.0f);					// Top Of Triangle (Front)
-	//	glColor3f(0.0f,1.0f,0.0f);						// Green
-	//	glVertex3f(-1.0f,-1.0f, 1.0f);					// Left Of Triangle (Front)
-	//	glColor3f(0.0f,0.0f,1.0f);						// Blue
-	//	glVertex3f( 1.0f,-1.0f, 1.0f);					// Right Of Triangle (Front)
-	//	glColor3f(1.0f,0.0f,0.0f);						// Red
-	//	glVertex3f( 0.0f, 1.0f, 0.0f);					// Top Of Triangle (Right)
-	//	glColor3f(0.0f,0.0f,1.0f);						// Blue
-	//	glVertex3f( 1.0f,-1.0f, 1.0f);					// Left Of Triangle (Right)
-	//	glColor3f(0.0f,1.0f,0.0f);						// Green
-	//	glVertex3f( 1.0f,-1.0f, -1.0f);					// Right Of Triangle (Right)
-	//	glColor3f(1.0f,0.0f,0.0f);						// Red
-	//	glVertex3f( 0.0f, 1.0f, 0.0f);					// Top Of Triangle (Back)
-	//	glColor3f(0.0f,1.0f,0.0f);						// Green
-	//	glVertex3f( 1.0f,-1.0f, -1.0f);					// Left Of Triangle (Back)
-	//	glColor3f(0.0f,0.0f,1.0f);						// Blue
-	//	glVertex3f(-1.0f,-1.0f, -1.0f);					// Right Of Triangle (Back)
-	//	glColor3f(1.0f,0.0f,0.0f);						// Red
-	//	glVertex3f( 0.0f, 1.0f, 0.0f);					// Top Of Triangle (Left)
-	//	glColor3f(0.0f,0.0f,1.0f);						// Blue
-	//	glVertex3f(-1.0f,-1.0f,-1.0f);					// Left Of Triangle (Left)
-	//	glColor3f(0.0f,1.0f,0.0f);						// Green
-	//	glVertex3f(-1.0f,-1.0f, 1.0f);					// Right Of Triangle (Left)
-	//glEnd();
-}
-
-
-void drawTeapot()
-{
-	//glDepthFunc(GL_ALWAYS);     // to avoid visual artifacts with grid lines
-	//glDisable(GL_LIGHTING);
-	glPushMatrix();             //NOTE: There is a bug on Mac misbehaviours of
-
-	glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();		
-	// Reset The Current Modelview Matrix
-	
-	glTranslatef(0.0f, 0.0f, .0f);
-	glColor3f(0.0, 1.0, 0.0);
-	glutWireTeapot(2.0);
-	//glutWireTeapot(2.0);
-	//glutSolidSphere(1, 8, 8);
-	//glColor3f(1.0, 1.0, 0.0);
-	//glutWireTeapot(2.0);
-	glEnd();
-
-	// restore default settings
-	glPopMatrix();
-	//glEnable(GL_LIGHTING);
-	//glDepthFunc(GL_LEQUAL);
-}
-
-void drawCube(float x, float y, float z)
-{
-	glPushMatrix();
-	//glLoadIdentity();									// Reset The Current Modelview Matrix
-	glTranslatef(x, y, z);
-	// Move Right 1.5 Units And Into The Screen 7.0
-	/*glRotatef(randomPos(45, 90),0,0,1.0f);		*/			// Rotate The Quad On The X axis ( NEW )
-	//rquad-=0.015f;										// Decrease The Rotation Variable For The Quad ( NEW )
-	glBegin(GL_QUADS);									// Draw A Quad
-	glColor3f(0.0f, 1.0f, 0.0f);						// Set The Color To Green
-	glVertex3f(1.0f, 1.0f, -1.0f);					// Top Right Of The Quad (Top)
-	glVertex3f(-1.0f, 1.0f, -1.0f);					// Top Left Of The Quad (Top)
-	glVertex3f(-1.0f, 1.0f, 1.0f);					// Bottom Left Of The Quad (Top)
-	glVertex3f(1.0f, 1.0f, 1.0f);					// Bottom Right Of The Quad (Top)
-	glColor3f(1.0f, 0.5f, 0.0f);						// Set The Color To Orange
-	glVertex3f(1.0f, -1.0f, 1.0f);					// Top Right Of The Quad (Bottom)
-	glVertex3f(-1.0f, -1.0f, 1.0f);					// Top Left Of The Quad (Bottom)
-	glVertex3f(-1.0f, -1.0f, -1.0f);					// Bottom Left Of The Quad (Bottom)
-	glVertex3f(1.0f, -1.0f, -1.0f);					// Bottom Right Of The Quad (Bottom)
-	glColor3f(1.0f, 0.0f, 0.0f);						// Set The Color To Red
-	glVertex3f(1.0f, 1.0f, 1.0f);					// Top Right Of The Quad (Front)
-	glVertex3f(-1.0f, 1.0f, 1.0f);					// Top Left Of The Quad (Front)
-	glVertex3f(-1.0f, -1.0f, 1.0f);					// Bottom Left Of The Quad (Front)
-	glVertex3f(1.0f, -1.0f, 1.0f);					// Bottom Right Of The Quad (Front)
-	glColor3f(1.0f, 1.0f, 0.0f);						// Set The Color To Yellow
-	glVertex3f(1.0f, -1.0f, -1.0f);					// Top Right Of The Quad (Back)
-	glVertex3f(-1.0f, -1.0f, -1.0f);					// Top Left Of The Quad (Back)
-	glVertex3f(-1.0f, 1.0f, -1.0f);					// Bottom Left Of The Quad (Back)
-	glVertex3f(1.0f, 1.0f, -1.0f);					// Bottom Right Of The Quad (Back)
-	glColor3f(0.0f, 0.0f, 1.0f);						// Set The Color To Blue
-	glVertex3f(-1.0f, 1.0f, 1.0f);					// Top Right Of The Quad (Left)
-	glVertex3f(-1.0f, 1.0f, -1.0f);					// Top Left Of The Quad (Left)
-	glVertex3f(-1.0f, -1.0f, -1.0f);					// Bottom Left Of The Quad (Left)
-	glVertex3f(-1.0f, -1.0f, 1.0f);					// Bottom Right Of The Quad (Left)
-	glColor3f(1.0f, 0.0f, 1.0f);						// Set The Color To Violet
-	glVertex3f(1.0f, 1.0f, -1.0f);					// Top Right Of The Quad (Right)
-	glVertex3f(1.0f, 1.0f, 1.0f);					// Top Left Of The Quad (Right)
-	glVertex3f(1.0f, -1.0f, 1.0f);					// Bottom Left Of The Quad (Right)
-	glVertex3f(1.0f, -1.0f, -1.0f);					// Bottom Right Of The Quad (Right)
-	glEnd();
-	glPopMatrix();
-	// Done Drawing The Quad										// Done Drawing The Quad
-}
-
-void drawTriangle() {
-	//glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);
-	glColor3f(0.0, 1.0, 0.0);
-	glBegin(GL_TRIANGLES);
-	glVertex3f(-0.5, -0.5, 0.0);
-	glVertex3f(0.5, 0.0, 0.0);
-	glVertex3f(0.0, 0.5, 0.0);
-	glEnd();
-}
-
-void drawAxis(float size)
-{
-
-	glm::mat4 ModelMatrix = glm::mat4(1.0);
-	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-	glLineWidth(3);
-	glBegin(GL_LINES);
-	glColor3f(1, 0, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(size, 0, 0);
-	glColor3f(0, 1, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, size, 0);
-	glColor3f(0, 0, 1);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 0, size);
-	glEnd();
-	glLineWidth(1);
-
-	// draw arrows(actually big square dots)
-	glPointSize(5);
-	glBegin(GL_POINTS);
-	glColor3f(1, 0, 0);
-	glVertex3f(size, 0, 0);
-	glColor3f(0, 1, 0);
-	glVertex3f(0, size, 0);
-	glColor3f(0, 0, 1);
-	glVertex3f(0, 0, size);
-	glEnd();
-	glPointSize(1);
-}
-
-void drawAxes() {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glColor3f(1.0, 0.0, 0.0); // red x
-	glBegin(GL_LINES);
-	// x aix
-
-	glVertex3f(-4.0, 0.0f, 0.0f);
-	glVertex3f(4.0, 0.0f, 0.0f);
-
-	// arrow
-	glVertex3f(4.0, 0.0f, 0.0f);
-	glVertex3f(3.0, 1.0f, 0.0f);
-
-	glVertex3f(4.0, 0.0f, 0.0f);
-	glVertex3f(3.0, -1.0f, 0.0f);
-	glEnd();
-	glFlush();
-
-	// y 
-	glColor3f(0.0, 1.0, 0.0); // green y
-	glBegin(GL_LINES);
-	glVertex3f(0.0, -4.0f, 0.0f);
-	glVertex3f(0.0, 4.0f, 0.0f);
-
-	// arrow
-	glVertex3f(0.0, 4.0f, 0.0f);
-	glVertex3f(1.0, 3.0f, 0.0f);
-
-	glVertex3f(0.0, 4.0f, 0.0f);
-	glVertex3f(-1.0, 3.0f, 0.0f);
-	glEnd();
-	glFlush();
-
-	// z 
-	glColor3f(0.0, 0.0, 1.0); // blue z
-	glBegin(GL_LINES);
-	glVertex3f(0.0, 0.0f, -4.0f);
-	glVertex3f(0.0, 0.0f, 4.0f);
-
-	// arrow
-	//glVertex3f(0.0, 0.0f, 4.0f);
-	//glVertex3f(0.0, 1.0f, 3.0f);
-
-	//glVertex3f(0.0, 0.0f, 4.0f);
-	//glVertex3f(0.0, -1.0f, 3.0f);
-	glEnd();
-	glFlush();
-}
-
 GLuint VertexArrayID;
 
 void draw3DModel(Model3D model3D, glm::mat4 modelMatrix, GLenum mode)
@@ -582,6 +380,134 @@ void draw3DModel(Model3D model3D, glm::mat4 modelMatrix, GLenum mode)
 	//glPopMatrix();
 }
 
+void drawTable(float x, float y, float z) {
+	glm::mat4 ModelMatrix = glm::mat4(1.0);
+	glm::vec3 tableScale = glm::vec3(0.05f, 0.05f, 0.05f);
+	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(x, y, z));
+	ModelMatrix = glm::scale(ModelMatrix, tableScale);
+	draw3DModel(table, ModelMatrix, GL_TRIANGLES);
+}
+
+void drawRoad(float x, float y, float z) {
+	glm::mat4 ModelMatrix3 = glm::mat4(1.0);
+	ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(x, y, z));
+	ModelMatrix3 = glm::rotate(ModelMatrix3, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	draw3DModel(road, ModelMatrix3, GL_TRIANGLES);
+}
+
+float randomPos(float min, float max) {
+	float range = max - min + 1;
+	float num = rand() % int(range) + min;
+	return num;
+}
+
+void displayCar() {
+	glm::mat4 ModelMatrix2 = glm::mat4(1.0);
+	if (deltaMove > 0) {
+		xModel -= deltaMove / 10;
+	}
+	/*glm::vec3 modelScale = glm::vec3(0.1f, 0.1f, 0.1f);
+	ModelMatrix2 = glm::scale(ModelMatrix2, modelScale);*/
+	glm::vec3 carScale = glm::vec3(1.5f, 1.5f, 1.5f);
+	ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(xModel, yModel, zModel));
+	ModelMatrix2 = glm::scale(ModelMatrix2, carScale);
+	ModelMatrix2 = glm::rotate(ModelMatrix2, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	draw3DModel(car, ModelMatrix2, GL_TRIANGLES);
+}
+
+void displayTable() {
+	if (isShown) {
+		xObj1 -= randomPos(20.0 + level * 4, 45.0 + level * 3);
+		zObj1 = randomPos(-3.0, 3.0);
+		drawTable(xObj1, yObj1, zObj1);
+	}
+}
+
+void nextLevel() {
+	switch (int(score))
+	{
+	case 200:
+		deltaMove += 0.02f;
+		level += 0.01f;
+		break;
+	case 500:
+		deltaMove += 0.02f;
+		break;
+	case 1000:
+		deltaMove += 0.03f;
+		break;
+	case 1500:
+		deltaMove += 0.04f;
+		break;
+	case 2000:
+		deltaMove += 0.05f;
+		break;
+	case 2500:
+		deltaMove += 0.07f;
+		break;
+	case 3000:
+		deltaMove += 0.09f;
+		break;
+	case 3200:
+		deltaMove += 0.1f;
+		break;
+	default:
+		break;
+	}
+}
+
+void getCrashed(float xCar, float xObject) {
+	if (int(xCar) - int(xObject) - 2 == 0 && int(zModel) - int(zObj1) == 0) {
+		deltaMove = 0.0f;
+	}
+	else {
+		if (deltaMove > 0) {
+			score += 0.1;
+			nextLevel();
+		}
+		printf("score: %f\n", score);
+		printf("level: %f\n", level);
+		printf("delta move: %f\n", deltaMove);
+
+	}
+}
+
+void drawObjects(GLvoid)									// Here's Where We Do All The Drawing
+{
+	if (deltaMove)
+		computePos(deltaMove);
+	if (deltaAngle)
+		computeDir(deltaAngle);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	ViewMatrix = glm::lookAt(eye, eye + glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(0.0, 1.0, 0.0));
+	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+
+	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
+	//display car
+	displayCar();
+	//first, display an object, then random its position
+	drawTable(xObj1, yObj1, zObj1);
+	drawRoad(0.0f, 0.0f, zObj1);
+	if (xModel <  xObj1 - 15.0f) {
+		isShown != isShown;
+		displayTable();
+	}
+	//detect crashed
+	getCrashed(xModel, xObj1);
+
+	//glm::mat4 ModelMatrix3 = glm::mat4(1.0);
+	//ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(4.0f, 0.0f, 0.0f));
+	//draw3DModel(car, ModelMatrix3, GL_TRIANGLES);
+
+	/*glm::vec3 modelScale = glm::vec3(0.1f, 0.1f, 0.1f);
+	glm::mat4 ModelMatrix3 = glm::mat4(1.0);
+	ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(4.0f, 3.0f, 0.0f));
+	ModelMatrix3 = glm::scale(ModelMatrix3, modelScale);
+	draw3DModel(canape, ModelMatrix3, GL_TRIANGLES);*/
+}
+
 /* Callback handler for normal-key event */
 void keyboard(unsigned char key, int x, int y) {
 	switch (key) {
@@ -598,7 +524,7 @@ void pressKey(int key, int xx, int yy) {
 	case GLUT_KEY_RIGHT: deltaAngle = 0.01f; break;
 	case GLUT_KEY_UP: deltaMove = 0.5f; break;
 	case GLUT_KEY_DOWN: deltaMove = -0.5f; break;
-	
+
 	}
 }
 
@@ -609,58 +535,25 @@ void releaseKey(int key, int x, int y) {
 	case GLUT_KEY_RIGHT: deltaAngle = 0.0f; break;
 	case GLUT_KEY_UP:
 	case GLUT_KEY_DOWN: deltaMove = 0; break;
-	
+
 	}
 }
 
-void displayModel() {
-	glm::mat4 ModelMatrix = glm::mat4(1.0);
-	if (deltaMove > 0) {
-		xModel -= deltaMove / 10;
+void controlCar(unsigned char key, int x, int y) {
+	switch (key) {
+	case 'a':
+		if (zModel <= 5) {
+			zModel += deltaMove + 0.2f;
+		}
+		break;
+	case 'd':
+		if (-5 <= zModel) {
+			zModel -= deltaMove + 0.2f;
+		}
+		break;
+	default: break;
 	}
 
-	std::cout << "x pos: \n" << xModel;
-	//std::cout << glm::to_string(ModelMatrix) << std::endl;
-	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(xModel, yModel, zModel));
-	draw3DModel(cube, ModelMatrix, GL_TRIANGLES);
-}
-
-void displayCube() {
-	if (cubeAppeared) {
-		drawCube(xCube, yCube, zCube);
-	}
-}
-
-void drawObjects(GLvoid)									// Here's Where We Do All The Drawing
-{
-	if (deltaMove)
-		computePos(deltaMove);
-	if (deltaAngle)
-		computeDir(deltaAngle);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	drawTeapot();
-	ViewMatrix = glm::lookAt(eye, eye + glm::vec3(-2.0f, 0.0f, 0.0f), glm::vec3(0.0, 1.0, 0.0));
-	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-
-	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
-	drawAxes();
-
-	glm::mat4 ModelMatrix2 = glm::mat4(1.0);
-	glm::vec3 modelScale = glm::vec3(0.1f, 0.1f, 0.1f);
-	ModelMatrix2 = glm::scale(ModelMatrix2, modelScale);
-	ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(-2.0f, 0.0f, 0.0f));
-	draw3DModel(car, ModelMatrix2, GL_TRIANGLES);
-
-	//glm::mat4 ModelMatrix3 = glm::mat4(1.0);
-	//ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(4.0f, 0.0f, 0.0f));
-	//draw3DModel(car, ModelMatrix3, GL_TRIANGLES);
-
-	/*glm::vec3 modelScale = glm::vec3(0.1f, 0.1f, 0.1f);
-	glm::mat4 ModelMatrix3 = glm::mat4(1.0);
-	ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(4.0f, 3.0f, 0.0f));
-	ModelMatrix3 = glm::scale(ModelMatrix3, modelScale);
-	draw3DModel(canape, ModelMatrix3, GL_TRIANGLES);*/
 }
 
 void renderScene(void) {
@@ -710,7 +603,7 @@ void initGL(int argc, char **argv)
 	glutSpecialFunc(pressKey); // Register callback handler for special-key event
 	glutSpecialUpFunc(releaseKey);
 	glutKeyboardFunc(keyboard);   // Register callback handler for special-key event
-
+	glutKeyboardFunc(controlCar);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(1.0,1.0,1.0,1.0);
 	glEnable(GL_CULL_FACE);	
@@ -720,11 +613,10 @@ void initGL(int argc, char **argv)
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	cube = loadModel3D("cube.obj", "uvtemplate.bmp");
-	suzanne = loadModel3D("suzanna2.obj", "suzanne.bmp");
-	canape = loadModel3D("table.obj", "Canape.bmp");
+	
 	car = loadModel3D("carModel.obj", "suzanne.bmp");
 	table = loadModel3D("table.obj", "suzanne.bmp");
+	road = loadModel3D("roadV2.obj", "suzanne.bmp");
 
 	if (glewIsSupported("GL_VERSION_2_0"))
 		printf("Ready for OpenGL 2.0\n");
