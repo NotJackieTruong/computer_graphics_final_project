@@ -38,6 +38,9 @@ float xObj1 = -20.0f;
 float yObj1 = 0.0f;
 float zObj1 = 0.0f;
 
+//x road
+float xRoad = -10.0f;
+
 //bool to display cube 
 bool isShown = true;
 
@@ -390,9 +393,12 @@ void drawTable(float x, float y, float z) {
 
 void drawRoad(float x, float y, float z) {
 	glm::mat4 ModelMatrix3 = glm::mat4(1.0);
+	glm::vec3 tableScale = glm::vec3(0.01f, 0.01f, 0.02f);
 	ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(x, y, z));
+	ModelMatrix3 = glm::scale(ModelMatrix3, tableScale);
 	ModelMatrix3 = glm::rotate(ModelMatrix3, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	draw3DModel(road, ModelMatrix3, GL_TRIANGLES);
+
 }
 
 float randomPos(float min, float max) {
@@ -412,6 +418,7 @@ void displayCar() {
 	ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(xModel, yModel, zModel));
 	ModelMatrix2 = glm::scale(ModelMatrix2, carScale);
 	ModelMatrix2 = glm::rotate(ModelMatrix2, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	
 	draw3DModel(car, ModelMatrix2, GL_TRIANGLES);
 }
 
@@ -420,6 +427,7 @@ void displayTable() {
 		xObj1 -= randomPos(20.0 + level * 4, 45.0 + level * 3);
 		zObj1 = randomPos(-3.0, 3.0);
 		drawTable(xObj1, yObj1, zObj1);
+		
 	}
 }
 
@@ -485,11 +493,12 @@ void drawObjects(GLvoid)									// Here's Where We Do All The Drawing
 	glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
 	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
+	
+	drawRoad(eye.x - 20.0f, -1.0f, 0.0f);
 	//display car
 	displayCar();
 	//first, display an object, then random its position
 	drawTable(xObj1, yObj1, zObj1);
-	drawRoad(0.0f, 0.0f, zObj1);
 	if (xModel <  xObj1 - 15.0f) {
 		isShown != isShown;
 		displayTable();
@@ -497,15 +506,6 @@ void drawObjects(GLvoid)									// Here's Where We Do All The Drawing
 	//detect crashed
 	getCrashed(xModel, xObj1);
 
-	//glm::mat4 ModelMatrix3 = glm::mat4(1.0);
-	//ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(4.0f, 0.0f, 0.0f));
-	//draw3DModel(car, ModelMatrix3, GL_TRIANGLES);
-
-	/*glm::vec3 modelScale = glm::vec3(0.1f, 0.1f, 0.1f);
-	glm::mat4 ModelMatrix3 = glm::mat4(1.0);
-	ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(4.0f, 3.0f, 0.0f));
-	ModelMatrix3 = glm::scale(ModelMatrix3, modelScale);
-	draw3DModel(canape, ModelMatrix3, GL_TRIANGLES);*/
 }
 
 /* Callback handler for normal-key event */
@@ -616,7 +616,7 @@ void initGL(int argc, char **argv)
 	
 	car = loadModel3D("carModel.obj", "suzanne.bmp");
 	table = loadModel3D("table.obj", "suzanne.bmp");
-	road = loadModel3D("roadV2.obj", "suzanne.bmp");
+	road = loadModel3D("abc.obj", "Canape.bmp");
 
 	if (glewIsSupported("GL_VERSION_2_0"))
 		printf("Ready for OpenGL 2.0\n");

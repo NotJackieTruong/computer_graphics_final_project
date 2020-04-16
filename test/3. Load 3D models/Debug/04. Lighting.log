@@ -1,0 +1,11 @@
+﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  main.cpp
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(112,16): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(195,16): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(206,13): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(214,4): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(219,4): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(225,4): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(231,18): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\Third Year\Computer_graphic\3. Load 3D models\main.cpp(503,11): warning C4552: '!=': result of expression not used
+  04. Lighting.vcxproj -> D:\Third Year\Computer_graphic\3. Load 3D models\Debug\Loading.exe
