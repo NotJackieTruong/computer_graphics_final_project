@@ -24,16 +24,16 @@ struct Vector3f
 
 glm::vec3 eye = glm::vec3(20.0f, 3.0f, 0.0f);
 float lx = -1.0f, lz = -1.0f;
-float FoV = 45.0f;
+float FoV = 100.0f;
 
 float deltaAngle = 0.0f;
-float deltaMove = 0.2f;
+float deltaMove = 2.0f;
 //x, y, z for 3d Model
-float xModel = 0.0f;
+float xModel = 10.0f;
 float yModel = 0.0f;
 float zModel = 0.0f;
 
-//x, y, z for cube
+//x, y, z for obj
 float xObj1 = -20.0f;
 float yObj1 = 0.0f;
 float zObj1 = 0.0f;
@@ -41,11 +41,44 @@ float zObj1 = 0.0f;
 //x road
 float xRoad = -10.0f;
 
-//bool to display cube 
-bool isShown = true;
+//x forest
+float xForest = -20.0f;
+float yForest = 0.0f;
+float zForest = 5.5f;
+
+//sign
+float xSign = 0.0f;
+float ySign = 0.0f;
+float zSign = -5.5f;
+
+//traffic light
+float xLightSign = -100.0f;
+float yLightSign = 0.0f;
+float zLightSign = 7.0f;
+
+//watch tower
+float xWatchTower = -250.0f;
+float yWatchTower = 0.0f;
+float zWatchTower = 10.0f;
+
+//wood fence
+float xWoodFence = -80.0f;
+float yWoodFence = 0.0f;
+float zWoodFence = 6.0f;
+
+//plam tree
+float xPalmTree = 0.0f;
+float yPalmTree = 0.0f;
+float zPalmTree = 0.0f;
+
+//palm trees
+float xPalmTrees = -20.0f;
+float zPalmTrees = -22.0f;
 
 //bool to check crashed
 bool isCrashed = false;
+
+
 
 //score
 float score = 0.0;
@@ -95,6 +128,14 @@ struct Model3D {
 Model3D car;
 Model3D table;
 Model3D road;
+Model3D tree;
+Model3D stopSign;
+Model3D lightSign;
+Model3D watchTower;
+Model3D woodFence;
+Model3D palmTree;
+Model3D bus;
+
 
 GLuint loadBMP_custom(const char * imagepath) {
 
@@ -298,7 +339,7 @@ void changeSize(int w, int h) {
 	// Set the viewport to be the entire window
     glViewport(0, 0, w, h);
 	// Set the correct perspective.
-	gluPerspective(70, ratio,1, 1000);//fovy, ratio, near, far
+	gluPerspective(100, ratio,1, 2000);//fovy, ratio, near, far
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -383,23 +424,91 @@ void draw3DModel(Model3D model3D, glm::mat4 modelMatrix, GLenum mode)
 	//glPopMatrix();
 }
 
-void drawTable(float x, float y, float z) {
+void drawCar(float x, float y, float z) {
+	glm::mat4 ModelMatrix2 = glm::mat4(1.0);
+	glm::vec3 carScale = glm::vec3(1.8f, 1.8f, 1.8f);
+	ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(x, y, z));
+	ModelMatrix2 = glm::scale(ModelMatrix2, carScale);
+	ModelMatrix2 = glm::rotate(ModelMatrix2, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	draw3DModel(car, ModelMatrix2, GL_TRIANGLES);
+}
+
+void drawBus(float x, float y, float z) {
 	glm::mat4 ModelMatrix = glm::mat4(1.0);
-	glm::vec3 tableScale = glm::vec3(0.05f, 0.05f, 0.05f);
+	glm::vec3 busScale = glm::vec3(0.02f, 0.02f, 0.02f);
 	ModelMatrix = glm::translate(ModelMatrix, glm::vec3(x, y, z));
-	ModelMatrix = glm::scale(ModelMatrix, tableScale);
-	draw3DModel(table, ModelMatrix, GL_TRIANGLES);
+	ModelMatrix = glm::scale(ModelMatrix, busScale);
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	draw3DModel(bus, ModelMatrix, GL_LINES);
 }
 
 void drawRoad(float x, float y, float z) {
 	glm::mat4 ModelMatrix3 = glm::mat4(1.0);
-	glm::vec3 tableScale = glm::vec3(0.01f, 0.01f, 0.02f);
+	glm::vec3 roadScale = glm::vec3(15.5f, 0.5f, 3.0f);
 	ModelMatrix3 = glm::translate(ModelMatrix3, glm::vec3(x, y, z));
-	ModelMatrix3 = glm::scale(ModelMatrix3, tableScale);
+	ModelMatrix3 = glm::scale(ModelMatrix3, roadScale);
 	ModelMatrix3 = glm::rotate(ModelMatrix3, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	draw3DModel(road, ModelMatrix3, GL_TRIANGLES);
+	draw3DModel(road, ModelMatrix3, GL_LINES);
 
 }
+
+void drawTree(float x, float y, float z) {
+	glm::mat4 ModelMatrix4 = glm::mat4(1.0);
+	ModelMatrix4 = glm::translate(ModelMatrix4, glm::vec3(x, y, z));
+	//ModelMatrix4 = glm::rotate(ModelMatrix4, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	draw3DModel(tree, ModelMatrix4, GL_LINES);
+}
+
+void drawSign(float x, float y, float z) {
+	glm::mat4 ModelMatrix5 = glm::mat4(1.0);
+	ModelMatrix5 = glm::translate(ModelMatrix5, glm::vec3(x, y, z));
+	glm::vec3 signScale = glm::vec3(0.02f, 0.02f, 0.02f);
+	ModelMatrix5 = glm::scale(ModelMatrix5, signScale);
+	ModelMatrix5 = glm::rotate(ModelMatrix5, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	ModelMatrix5 = glm::rotate(ModelMatrix5, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	draw3DModel(stopSign, ModelMatrix5, GL_LINES);
+}
+
+void drawLightSign(float x, float y, float z) {
+	glm::mat4 ModelMatrix6 = glm::mat4(1.0);
+	ModelMatrix6 = glm::translate(ModelMatrix6, glm::vec3(x, y, z));
+	glm::vec3 lightScale = glm::vec3(0.06f, 0.06f, 0.06f);
+	ModelMatrix6 = glm::scale(ModelMatrix6, lightScale);
+	ModelMatrix6 = glm::rotate(ModelMatrix6, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	ModelMatrix6 = glm::rotate(ModelMatrix6, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	draw3DModel(lightSign, ModelMatrix6, GL_LINES);
+}
+
+void drawWatchTower(float x, float y, float z) {
+	glm::mat4 ModelMatrix7 = glm::mat4(1.0);
+	ModelMatrix7 = glm::translate(ModelMatrix7, glm::vec3(x, y, z));
+	glm::vec3 towerScale = glm::vec3(2.5f, 2.5f, 2.5f);
+	ModelMatrix7 = glm::scale(ModelMatrix7, towerScale);
+	/*ModelMatrix7 = glm::rotate(ModelMatrix7, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	ModelMatrix7 = glm::rotate(ModelMatrix7, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));*/
+	draw3DModel(watchTower, ModelMatrix7, GL_LINES);
+}
+
+void drawWoodFence(float x, float y, float z) {
+	glm::mat4 ModelMatrix8 = glm::mat4(1.0);
+	ModelMatrix8 = glm::translate(ModelMatrix8, glm::vec3(x, y, z));
+	glm::vec3 lightScale = glm::vec3(0.02f, 0.02f, 0.02f);
+	ModelMatrix8 = glm::scale(ModelMatrix8, lightScale);
+	ModelMatrix8 = glm::rotate(ModelMatrix8, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	draw3DModel(woodFence, ModelMatrix8, GL_LINES);
+}
+
+void drawPalmTree(float x, float y, float z, float treeScale, float treeRotate, glm::vec3 vector) {
+	glm::mat4 ModelMatrix9 = glm::mat4(1.0);
+	ModelMatrix9 = glm::translate(ModelMatrix9, glm::vec3(x, y, z));
+	glm::vec3 lightScale = glm::vec3(treeScale, treeScale, treeScale);
+	ModelMatrix9 = glm::scale(ModelMatrix9, lightScale);
+	ModelMatrix9 = glm::rotate(ModelMatrix9, glm::radians(treeRotate), vector);
+	draw3DModel(palmTree, ModelMatrix9, GL_LINES);
+}
+
+
 
 float randomPos(float min, float max) {
 	float range = max - min + 1;
@@ -408,56 +517,82 @@ float randomPos(float min, float max) {
 }
 
 void displayCar() {
-	glm::mat4 ModelMatrix2 = glm::mat4(1.0);
+	
 	if (deltaMove > 0) {
 		xModel -= deltaMove / 10;
 	}
 	/*glm::vec3 modelScale = glm::vec3(0.1f, 0.1f, 0.1f);
 	ModelMatrix2 = glm::scale(ModelMatrix2, modelScale);*/
-	glm::vec3 carScale = glm::vec3(1.5f, 1.5f, 1.5f);
-	ModelMatrix2 = glm::translate(ModelMatrix2, glm::vec3(xModel, yModel, zModel));
-	ModelMatrix2 = glm::scale(ModelMatrix2, carScale);
-	ModelMatrix2 = glm::rotate(ModelMatrix2, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	
-	draw3DModel(car, ModelMatrix2, GL_TRIANGLES);
+	drawCar(xModel, yModel, zModel);
 }
 
-void displayTable() {
-	if (isShown) {
-		xObj1 -= randomPos(20.0 + level * 4, 45.0 + level * 3);
-		zObj1 = randomPos(-3.0, 3.0);
-		drawTable(xObj1, yObj1, zObj1);
+void displayTrees(float x, float z) {
+	
+	drawPalmTree(x - 20.0f, 0.0f, z - 8.0f, 0.013, -90.0f, glm::vec3(1.0, 0.0, 0.0));
+	drawPalmTree(x - 16.0f, 0.0f, z - 6.0f, 0.017, -90.0f, glm::vec3(1.0, 0.0, 0.0));
+	drawPalmTree(x - 13.0f, 0.0f, z - 7.0f, 0.0195, -90.0f, glm::vec3(1.0, 0.0, 0.0));
+}
+
+void displayBus() {
+	xObj1 -= randomPos(80.0 , 120.0);
+	zObj1 = randomPos(-3.0, 3.0);
+	if (deltaMove > 0) {
+		xObj1 -= deltaMove / 15;
+
+	}
+	drawBus(xObj1, yObj1, zObj1);
+}
+
+void displaySideObj() {
+
+	float a = randomPos(-5.0, 5.0);
+	float b = randomPos(1.0, 8.0);
+	xSign -= randomPos(300.0, 350.0);
+	xLightSign -= randomPos(300.0, 360.0);
+	xWatchTower -= randomPos(300.0, 320.0);
 		
+	drawLightSign(xLightSign, yLightSign, zLightSign);
+	drawSign(xSign, ySign, zSign);
+	drawWatchTower(xWatchTower, yWatchTower, -1.0 * zWatchTower);
+	
+	
+}
+
+void drawForest(float x, float y, float z) {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 1; j++) {
+			x = -20 * i + x;
+			drawTree(x, y, z + 3 * j);
+		}
 	}
 }
 
 void nextLevel() {
 	switch (int(score))
 	{
-	case 200:
-		deltaMove += 0.02f;
-		level += 0.01f;
+	case 50:
+		deltaMove += 0.2f;
 		break;
-	case 500:
-		deltaMove += 0.02f;
+	case 100:
+		deltaMove += 0.5f;
+		break;
+	case 200:
+		deltaMove += 0.9f;
+		break;
+	case 800:
+		deltaMove += 1.2f;
 		break;
 	case 1000:
-		deltaMove += 0.03f;
+		deltaMove += 1.5f;
 		break;
 	case 1500:
-		deltaMove += 0.04f;
+		deltaMove += 1.8f;
 		break;
 	case 2000:
-		deltaMove += 0.05f;
+		deltaMove += 2.1f;
 		break;
 	case 2500:
-		deltaMove += 0.07f;
-		break;
-	case 3000:
-		deltaMove += 0.09f;
-		break;
-	case 3200:
-		deltaMove += 0.1f;
+		deltaMove += 2.4f;
 		break;
 	default:
 		break;
@@ -465,18 +600,16 @@ void nextLevel() {
 }
 
 void getCrashed(float xCar, float xObject) {
-	if (int(xCar) - int(xObject) - 2 == 0 && int(zModel) - int(zObj1) == 0) {
+
+	if (int(xCar) - int(xObject) - 14.0f == 0 && int(zModel) - int(zObj1) == 0) {
 		deltaMove = 0.0f;
 	}
 	else {
 		if (deltaMove > 0) {
 			score += 0.1;
 			nextLevel();
+			printf("score: %f\n", score);
 		}
-		printf("score: %f\n", score);
-		printf("level: %f\n", level);
-		printf("delta move: %f\n", deltaMove);
-
 	}
 }
 
@@ -494,18 +627,33 @@ void drawObjects(GLvoid)									// Here's Where We Do All The Drawing
 
 	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
 	
-	drawRoad(eye.x - 20.0f, -1.0f, 0.0f);
+	drawRoad(eye.x - 55.0f, -1.0f, 0.0f);
+	drawSign(xSign, ySign, zSign);
+	drawLightSign(xLightSign, yLightSign, zLightSign);
+	drawWatchTower(xWatchTower, yWatchTower, zWatchTower);
+
+	displayTrees(xPalmTrees, zPalmTrees);
+	
 	//display car
 	displayCar();
 	//first, display an object, then random its position
-	drawTable(xObj1, yObj1, zObj1);
-	if (xModel <  xObj1 - 15.0f) {
-		isShown != isShown;
-		displayTable();
-	}
-	//detect crashed
-	getCrashed(xModel, xObj1);
+	drawBus(xObj1, yObj1, zObj1);
 
+	if (xModel <  xObj1) {
+		displayBus();
+	}
+	if (xModel < xWatchTower - 15.0f) {
+		displaySideObj();
+	}
+	if (xModel < xPalmTrees - 25.0f) {
+		xPalmTrees -= 500.0f;
+		zPalmTrees = -zPalmTrees;
+		displayTrees(xPalmTrees, zPalmTrees);
+	}
+	//printf("x model: %f\n", xModel);
+	
+	/*detect crashed*/
+	getCrashed(xModel, xObj1);
 }
 
 /* Callback handler for normal-key event */
@@ -543,12 +691,12 @@ void controlCar(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'a':
 		if (zModel <= 5) {
-			zModel += deltaMove + 0.2f;
+			zModel += 0.7f;
 		}
 		break;
 	case 'd':
 		if (-5 <= zModel) {
-			zModel -= deltaMove + 0.2f;
+			zModel -= 0.7f;
 		}
 		break;
 	default: break;
@@ -613,10 +761,18 @@ void initGL(int argc, char **argv)
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
+
 	
-	car = loadModel3D("carModel.obj", "suzanne.bmp");
-	table = loadModel3D("table.obj", "suzanne.bmp");
-	road = loadModel3D("abc.obj", "Canape.bmp");
+	car = loadModel3D("car2.obj", "suzanne.bmp");
+	bus = loadModel3D("bus.obj", "suzanne.bmp");
+	road = loadModel3D("old road.obj", "suzanne.bmp");
+	tree = loadModel3D("Tree.obj", "suzanne.bmp");
+	stopSign = loadModel3D("stopSign.obj", "suzanne.bmp");
+	lightSign = loadModel3D("lightSign.obj", "suzanne.bmp");
+	watchTower = loadModel3D("watchTower.obj", "suzanne.bmp");
+	woodFence = loadModel3D("woodFence.obj", "suzanne.bmp");
+	palmTree = loadModel3D("palmTree.obj", "suzanne.bmp");
+
 
 	if (glewIsSupported("GL_VERSION_2_0"))
 		printf("Ready for OpenGL 2.0\n");
@@ -626,6 +782,8 @@ void initGL(int argc, char **argv)
 	}
 }
 
+
+
 int main(int argc, char **argv) 
 {
 	initGL(argc, argv);
@@ -634,7 +792,6 @@ int main(int argc, char **argv)
 	progShader = initShaders("lighting.vert", "lighting.frag");
 	//progShader = initShaders("perFrag.vert", "perFrag.frag");
 	updateShaderResources();
-
 	glutMainLoop();//says: we're ready to get in the event processing loop
 
 	//glDeleteBuffers(1, &vertexbuffer);

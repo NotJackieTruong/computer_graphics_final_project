@@ -1,4 +1,0 @@
-C:\Users\JackieTruong\Desktop\3. Load 3D models\Debug\Loading.exe
-C:\Users\JackieTruong\Desktop\3. Load 3D models\Debug\Loading.pdb
-D:\Third Year\Computer_graphic\3. Load 3D models\Debug\Loading.exe
-D:\Third Year\Computer_graphic\3. Load 3D models\Debug\Loading.pdb
